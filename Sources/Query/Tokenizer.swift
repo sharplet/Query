@@ -1,68 +1,43 @@
 struct Tokenizer: IteratorProtocol {
-  private enum Separator: Character {
-    case field = "&"
-    case value = "="
-  }
-
-  private enum State {
-    case initial
-    case name
-    case separator(Separator)
-    case value
-    case finished
-  }
-
   let string: String
+  private var isFinished: Bool
+  private var skipValueSeparator: Bool
   private var remaining: Substring
-  private var state: State
 
   init(string: String) {
+    self.isFinished = false
     self.remaining = string[...]
-    self.state = .initial
+    self.skipValueSeparator = false
     self.string = string
   }
 
   mutating func next() -> Token? {
-    switch state {
-    case .finished:
-      return nil
+    guard !isFinished else { return nil }
 
-    case _ where remaining.isEmpty:
-      state = .finished
+    guard !remaining.isEmpty else {
+      isFinished = true
       return .end
+    }
 
-    case .initial:
-      if remaining.first == Separator.field.rawValue {
-        state = .separator(.field)
+    switch remaining.first! {
+    case "=" where !skipValueSeparator:
+      skipValueSeparator = true
+      fallthrough
+    case "&":
+      let separator = QuerySeparator(rawValue: remaining.eat())!
+      return .separator(separator)
+
+    default:
+      let text: Substring
+
+      if skipValueSeparator {
+        skipValueSeparator = false
+        text = remaining.eat(upTo: "&")
       } else {
-        state = .name
+        text = remaining.eat(upToOneOf: QuerySeparator.allowedCharacters)
       }
 
-      return next()
-
-    case .name:
-      let (separator, name) = remaining.eat(upTo: Separator.self)
-      if let separator = separator {
-        state = .separator(separator)
-      }
-      return .name(name)
-
-    case let .separator(separator):
-      switch separator {
-      case .field:
-        state = .initial
-      case .value:
-        state = .value
-      }
-
-      return .separator(remaining.eat(asserting: separator.rawValue))
-
-    case .value:
-      let value = remaining.eat(upTo: Separator.field.rawValue)
-      if !remaining.isEmpty {
-        state = .separator(.field)
-      }
-      return .value(value)
+      return .text(text)
     }
   }
 }

@@ -3,14 +3,14 @@ import XCTest
 
 final class TokenizerTests: XCTestCase {
   func testTokenizer() {
-    assertTokens("foo", [.name("foo"), .end])
-    assertTokens("foo=bar", [.name("foo"), .separator("="), .value("bar"), .end])
-    assertTokens("foo%3Dbar", [.name("foo%3Dbar"), .end])
-    assertTokens("foo==bar", [.name("foo"), .separator("="), .value("=bar"), .end])
-    assertTokens("&foo=bar", [.separator("&"), .name("foo"), .separator("="), .value("bar"), .end])
-    assertTokens("foo=bar&", [.name("foo"), .separator("="), .value("bar"), .separator("&"), .end])
-    assertTokens("foo&bar=", [.name("foo"), .separator("&"), .name("bar"), .separator("="), .end])
-    assertTokens("foo&&bar", [.name("foo"), .separator("&"), .separator("&"), .name("bar"), .end])
+    assertTokens("foo", [.text("foo"), .end])
+    assertTokens("foo=bar", [.text("foo"), .separator(.value), .text("bar"), .end])
+    assertTokens("foo%3Dbar", [.text("foo%3Dbar"), .end])
+    assertTokens("foo==bar", [.text("foo"), .separator(.value), .text("=bar"), .end])
+    assertTokens("&foo=bar", [.separator(.field), .text("foo"), .separator(.value), .text("bar"), .end])
+    assertTokens("foo=bar&", [.text("foo"), .separator(.value), .text("bar"), .separator(.field), .end])
+    assertTokens("foo&bar=", [.text("foo"), .separator(.field), .text("bar"), .separator(.value), .end])
+    assertTokens("foo&&bar", [.text("foo"), .separator(.field), .separator(.field), .text("bar"), .end])
   }
 
   func testSubstringHash() {
