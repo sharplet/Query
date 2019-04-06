@@ -44,7 +44,7 @@ struct Tokenizer: IteratorProtocol {
     case let .separator(separator):
       switch separator {
       case .field:
-        state = .name
+        state = .initial
       case .value:
         state = .value
       }
