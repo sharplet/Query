@@ -2,6 +2,7 @@ enum Token: Hashable {
   case name(Substring)
   case value(Substring)
   case separator(Character)
+  case end
 }
 
 extension Token: CustomStringConvertible {
@@ -13,6 +14,8 @@ extension Token: CustomStringConvertible {
       return "value(\(value))"
     case let .separator(separator):
       return "separator(\(separator))"
+    case .end:
+      return "end"
     }
   }
 }

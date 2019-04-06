@@ -24,8 +24,12 @@ struct Tokenizer: IteratorProtocol {
 
   mutating func next() -> Token? {
     switch state {
-    case _ where remaining.isEmpty, .finished:
+    case .finished:
       return nil
+
+    case _ where remaining.isEmpty:
+      state = .finished
+      return .end
 
     case .initial:
       if remaining.first == Separator.field.rawValue {
@@ -38,7 +42,9 @@ struct Tokenizer: IteratorProtocol {
 
     case .name:
       let (separator, name) = remaining.eat(upTo: Separator.self)
-      state = separator.map(State.separator) ?? .finished
+      if let separator = separator {
+        state = .separator(separator)
+      }
       return .name(name)
 
     case let .separator(separator):
@@ -53,7 +59,9 @@ struct Tokenizer: IteratorProtocol {
 
     case .value:
       let value = remaining.eat(upTo: Separator.field.rawValue)
-      state = remaining.isEmpty ? .finished : .separator(.field)
+      if !remaining.isEmpty {
+        state = .separator(.field)
+      }
       return .value(value)
     }
   }
