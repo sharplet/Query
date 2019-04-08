@@ -18,7 +18,7 @@ final class TokenizerTests: XCTestCase {
   func testSubstringHash() {
     let source = "foofoo"
     let midpoint = source.lastIndex(of: "f")!
-    XCTAssertEqual(source[..<midpoint],           source[midpoint...])
+    XCTAssertEqual(source[..<midpoint], source[midpoint...])
     XCTAssertEqual(source[..<midpoint].hashValue, source[midpoint...].hashValue)
   }
 }
