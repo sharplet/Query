@@ -12,6 +12,7 @@ final class TokenizerTests: XCTestCase {
     assertTokens("foo&bar=", [.text("foo"), .separator(.field), .text("bar"), .separator(.value), .end])
     assertTokens("foo&&bar", [.text("foo"), .separator(.field), .separator(.field), .text("bar"), .end])
     assertTokens("foo=bar=baz", [.text("foo"), .separator(.value), .text("bar=baz"), .end])
+    assertTokens(" foo= bar ", [.text(" foo"), .separator(.value), .text(" bar "), .end])
   }
 
   func testSubstringHash() {
