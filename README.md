@@ -25,4 +25,4 @@ Encode and decode query strings.
     only printable ASCII.
 
 [robustness principle]: https://en.wikipedia.org/wiki/Robustness_principle
-[trim-commit]: https://github.com/sharplet/Query/tree/443736a7d579da8aa03ce14d17ebdf100e0a08b3
+[trim-commit]: https://github.com/sharplet/Query/commit/443736a7d579da8aa03ce14d17ebdf100e0a08b3
